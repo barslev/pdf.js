@@ -25,7 +25,7 @@ const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const { mkdirp } = require("mkdirp");
 const path = require("path");
-const rimraf = require("rimraf");
+const rimraf = require("rimraf").rimraf;
 const stream = require("stream");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
@@ -1452,7 +1452,7 @@ gulp.task("jsdoc", function (done) {
 
   const JSDOC_FILES = ["src/display/api.js"];
 
-  rimraf(JSDOC_BUILD_DIR, function () {
+  rimraf(JSDOC_BUILD_DIR).then(function () {
     mkdirp(JSDOC_BUILD_DIR).then(function () {
       const command =
         '"node_modules/.bin/jsdoc" -d ' +
@@ -1998,7 +1998,7 @@ gulp.task("clean", function (done) {
   console.log();
   console.log("### Cleaning up project builds");
 
-  rimraf(BUILD_DIR, done);
+  rimraf(BUILD_DIR).then(done);
 });
 
 gulp.task("importl10n", function (done) {
@@ -2137,7 +2137,7 @@ gulp.task(
 
       console.log();
       console.log("### Overwriting all files");
-      rimraf.sync(path.join(DIST_DIR, "*"));
+      rimraf.sync(path.join(DIST_DIR, "*"), { glob: true });
 
       return merge([
         packageJson().pipe(gulp.dest(DIST_DIR)),
@@ -2326,7 +2326,7 @@ gulp.task(
       // The mozcentral baseline directory is a Git repository, so we
       // remove all files and copy the current mozcentral build files
       // into it to create the diff.
-      rimraf.sync(MOZCENTRAL_BASELINE_DIR + "*");
+      rimraf.sync(MOZCENTRAL_BASELINE_DIR + "*", { glob: true });
 
       gulp
         .src([BUILD_DIR + "mozcentral/**/*"])
